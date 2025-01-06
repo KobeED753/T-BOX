@@ -1,0 +1,27 @@
+$(function() {
+    $('.navToggle').click(function() {
+        $(this).toggleClass('active');
+
+        if ($(this).hasClass('active')) {
+            $('.globalMenuSp').addClass('active');
+        } else {
+            $('.globalMenuSp').removeClass('active');
+        }
+    });
+    $("#nav li a").on("click", function() {
+    var w = $(window).width();
+    var x = 600;
+    if (w <= x) {
+    $(this).next().slideToggle();
+  }
+  });
+});
+
+
+$(function() {
+    $('.catMenu, .oldRankResult').hide();
+
+    $('.toggleTitle').click(function() {
+        $(this).next().slideToggle();
+    });
+});

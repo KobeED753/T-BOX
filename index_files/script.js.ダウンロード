@@ -1,0 +1,150 @@
+//フェードアニメーション
+$(function() {
+	$('.fadeindown').one('inview', function(event, isInView) {
+	    if (isInView) {
+	    //表示領域に入った時
+	      $(this).addClass('fadeInDown');
+	    } else {
+	    //表示領域から出た時
+	      $(this).removeClass('fadeInDown');
+	    }
+	});
+});
+
+// $(function () {
+//   var index = 0;
+//   // クッキーのindexを取得し読み込み時にオープンする
+//   if ($.cookie('index')) {
+//     index = $.cookie('index');
+//     $('.tab li').removeClass('tabActive').eq(index).addClass('tabActive');
+//     $('.target').hide().eq(index).show();
+//   }
+//   $('.tab li').click(function() {
+//     if (index != $('.tab li').index(this)) {
+//       index = $('.tab li').index(this);
+//       // タブの内容
+//       $('.target').hide().eq(index).fadeIn('fast');
+//       // タブ
+//       $('.tab li').removeClass('tabActive').eq(index).addClass('tabActive');
+//       // 有効期限は1日（クッキーにはドメインをセットしない、ブラウザを閉じたら初期化）
+//       $.cookie('index', index, { expires: 1 });
+//     }
+//   });
+// });
+$(function () {
+  $('.toggleTitle').on('click', function () {
+    /*矢印の向きを変更*/
+    $(this).toggleClass('open');
+  });
+});
+
+
+// スライダー
+$(document).ready(function() {
+  $('.mypattern').slick({
+    autoplay: true,
+    autoplaySpeed: 2500,
+    speed: 800,
+    dots: true,
+    arrows: true,
+    centerMode: true,
+    centerPadding: '10%',
+  });
+});
+
+// モーダル
+$(function(){
+    $('.js-modal-open').on('click',function(){
+        $('.js-modal').fadeIn();
+        return false;
+    });
+    $('.js-modal-close').on('click',function(){
+        $('.js-modal').fadeOut();
+        return false;
+    });
+});
+
+// Ajaxモーダル
+$(function(){
+    $('.ajax-modal-open').on('click',function(){
+
+        var id = $(this).attr("id").replace(/rating/g,'');
+        //alert(id);
+        $('input:hidden[name="ratingid"]').val(id);
+        return false;
+    });
+
+});
+
+
+function AjaxRatingSubmit(){
+
+var rate_abc=$('input:radio[name="inp_rate"]:checked').val();
+var rate_mncd=$('input:hidden[name="ratingid"]').val();
+
+if(rate_abc && rate_mncd){
+
+//#rate_a_123456
+var rateid='#rate_'+rate_abc+'_'+rate_mncd;
+
+var cnt=parseInt($(rateid).text()) + 1;
+$(rateid).text(cnt);
+//alert(cnt);
+
+//Ajax here
+        jQuery.ajax({
+               type: 'POST',
+               url: 'rateajax.php',
+                cache: false,
+               dataType: 'html',
+              data: {
+                 'ratingid':rate_mncd,
+                  'ratingtenpo':$('input:hidden[name="ratingtenpo"]').val(),
+                    'inp_rate':rate_abc
+                 },
+               success: function(data) {
+                  console.log('OK '+data)
+               },
+               error:function() {
+                  //alert('問題がありました。');
+               }
+        });
+        
+        //評価済みにする [id=target]←たまにメニュー重複のため
+        var target='[id=rating'+rate_mncd+']';
+        $(target).removeClass('js-modal-open ajax-modal-open');
+        $(target).addClass('evalBtnClose');
+        $(target).text('評価済');
+
+        //チェックも外しとく
+        $('input[value="a"]').prop('checked', false);
+        $('input[value="b"]').prop('checked', false);
+        $('input[value="c"]').prop('checked', false);
+
+        $('.js-modal').fadeOut();
+        return false;
+
+}else{
+
+        $('.js-modal').fadeOut();
+        return false;
+}
+
+}
+
+
+// 食堂名の文字数によってフォントサイズを変更
+$(document).ready(function(){
+  $("#title span:first-child").each(function() {
+    var tenpo_len = $(this).html();
+    if(tenpo_len.length >= 20){
+      $(this).addClass("tenpoSml1");
+    } else if(tenpo_len.length >= 16) {
+      $(this).addClass("tenpoSml2");
+    } else if (tenpo_len.length >= 15) {
+      $(this).addClass("tenpoSml3");
+    }
+    // console.log(tenpo_len.length);
+  });
+});
+
